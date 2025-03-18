@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { API_URL } from '../lib/api'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -8,7 +9,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       const refresh_token = localStorage.getItem('refresh_token')
-      await axios.post('http://127.0.0.1:8000/api/accounts/logout/', 
+      await axios.post(`${API_URL}/accounts/logout/`, 
         { refresh: refresh_token },
         {
           headers: {

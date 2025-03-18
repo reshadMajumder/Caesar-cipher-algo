@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { API_URL } from '../lib/api'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export default function Home() {
       }
 
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/password-entries/', {
+        const response = await axios.get(`${API_URL}/password-entries/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
@@ -53,7 +54,7 @@ export default function Home() {
         user: user.id  // Send user ID from user object
       }
 
-      const response = await axios.post('http://127.0.0.1:8000/api/password-entries/',
+      const response = await axios.post(`${API_URL}/password-entries/`,
         newPassword,
         {
           headers: {
@@ -80,7 +81,7 @@ export default function Home() {
 
   async function handleDelete(id) {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/password-entries/${id}/`, {
+      await axios.delete(`${API_URL}/password-entries/${id}/`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'application/json'
@@ -111,7 +112,7 @@ export default function Home() {
 
   const handleView = async (id) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/password-entries/${id}/`, {
+      const response = await axios.get(`${API_URL}/password-entries/${id}/`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }

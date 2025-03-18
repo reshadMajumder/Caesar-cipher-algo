@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { API_URL } from '../lib/api'
 
 export default function PasswordDetail() {
   const { id } = useParams()

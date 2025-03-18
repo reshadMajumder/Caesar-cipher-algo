@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
+import { API_URL } from '../lib/api'
 export default function Login() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -17,7 +17,7 @@ export default function Login() {
       setLoading(true)
       setError(null)
       
-      const response = await axios.post('http://127.0.0.1:8000/api/accounts/login/', 
+      const response = await axios.post(`${API_URL}/accounts/login/`, 
         { username, password },
         {
           headers: {
