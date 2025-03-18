@@ -33,6 +33,7 @@ class LoginView(APIView):
                     'data': {
                         'user': {
                            'username': user.username,
+                           'id': user.id,
                         },
                         'tokens': {
                             'access': str(refresh.access_token),

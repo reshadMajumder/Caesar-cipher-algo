@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y-6mof5bfbjq^^+l!kb($me3fz#f@sm&ngkok2^%!a&o8on7dh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -81,14 +81,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#sqlite
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'algo_ogbp',
-        'USER': 'algo_ogbp_user',
-        'PASSWORD': '2qjZJLtqw6ufMe5RJKy4hydQdb8AdLzP',
-        'HOST': 'dpg-cvckj9btq21c73a09k50-a.oregon-postgres.render.com',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -125,6 +122,10 @@ USE_TZ = True
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 
 
 
@@ -147,14 +148,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '60/minute',  # Limit anonymous users to 60 requests per minute
-        'user': '240/minute'  # Limit authenticated users to 240 requests per minute
-    }
 }
 
 
@@ -174,14 +170,5 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 
 }
-
-# Add these settings for production
-SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
-SESSION_COOKIE_SECURE = True  # Cookies will only be sent over HTTPS
-CSRF_COOKIE_SECURE = True  # CSRF cookies will only be sent over HTTPS
-SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filtering in browsers
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent browsers from MIME-sniffing responses
-
-
 
 
