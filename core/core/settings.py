@@ -83,14 +83,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_fpe3Y2IjqXDB',
-        'HOST': 'ep-polished-mode-a5f0eq4a-pooler.us-east-2.aws.neon.tech',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',
-        },
+        'NAME': 'patsons',  # From Render dashboard
+        'USER': 'patsons_user',  # From Render dashboard
+        'PASSWORD': 'DsTqE9yivREiv2NPXOZg7OdZzQ14nCya',  # From Render dashboard
+        'HOST': 'dpg-cvbe1din91rc739g1gh0-a.oregon-postgres.render.com',  # From Render dashboard
+        'PORT': '5432',  # Default PostgreSQL port
     }
 }
 
