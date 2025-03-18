@@ -1,0 +1,45 @@
+# Django specific
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media
+
+# If using SQLite3 database files
+*.sqlite3
+
+# If using PostgreSQL
+*.pgsql
+
+# If using MySQL
+*.mysql
+
+# If using SQLite
+*.sqlite3
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+media
+
+# If using virtualenv:
+venv/
+ENV/
+
+# If using PyCharm:
+.idea/
+
+# If using VS Code:
+.vscode/
+
+# If using Jupyter Notebook:
+.ipynb_checkpoints/
+
+# If using macOS:
+.DS_Store
+
+# If using Windows:
+Thumbs.db
+ehthumbs.db
