@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'accounts',
 
     "home",
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +134,42 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Generate a new key and keep it secret
+
+
+# Add REST Framework settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '60/minute',  # Limit anonymous users to 60 requests per minute
+        'user': '240/minute'  # Limit authenticated users to 240 requests per minute
+    }
+}
+
+
+
+# JWT settings
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+
+    'ROTATE_REFRESH_TOKENS': True,
+
+    'BLACKLIST_AFTER_ROTATION': True,
+
+}
+
+
+
+
