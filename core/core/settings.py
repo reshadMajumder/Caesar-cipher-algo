@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y-6mof5bfbjq^^+l!kb($me3fz#f@sm&ngkok2^%!a&o8on7dh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -83,11 +84,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'patsons',  # From Render dashboard
-        'USER': 'patsons_user',  # From Render dashboard
-        'PASSWORD': 'DsTqE9yivREiv2NPXOZg7OdZzQ14nCya',  # From Render dashboard
-        'HOST': 'dpg-cvbe1din91rc739g1gh0-a.oregon-postgres.render.com',  # From Render dashboard
-        'PORT': '5432',  # Default PostgreSQL port
+        'NAME': 'algo_ogbp',
+        'USER': 'algo_ogbp_user',
+        'PASSWORD': '2qjZJLtqw6ufMe5RJKy4hydQdb8AdLzP',
+        'HOST': 'dpg-cvckj9btq21c73a09k50-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
 
@@ -173,6 +174,13 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 
 }
+
+# Add these settings for production
+SECURE_SSL_REDIRECT = True  # Redirect all HTTP traffic to HTTPS
+SESSION_COOKIE_SECURE = True  # Cookies will only be sent over HTTPS
+CSRF_COOKIE_SECURE = True  # CSRF cookies will only be sent over HTTPS
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filtering in browsers
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent browsers from MIME-sniffing responses
 
 
 
