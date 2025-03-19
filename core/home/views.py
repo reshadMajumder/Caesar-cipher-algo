@@ -8,9 +8,7 @@ from rest_framework import status
 from rest_framework import permissions
 
 
-# Create your views here.
-
-from .caesar_cipher import encrypt, decrypt
+from .playfair import encrypt, decrypt
 
 
 
@@ -23,7 +21,7 @@ class PasswordEntryView(APIView):
     def get(self, request,id=None):
         if id:
             password_instance = PasswordEntry.objects.get(id=id)
-            password_instance.password = decrypt(password_instance.password, "pass")
+            password_instance.password = decrypt(password_instance.password, "pass") #decrypt the password with "pass"key
             serializer = PasswordEntrySerializer(password_instance)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
@@ -33,7 +31,7 @@ class PasswordEntryView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        password = encrypt(request.data['password'], "pass")
+        password = encrypt(request.data['password'], "pass") #encrypt the password with "pass"key
         request.data['password'] = password
 
         serializer = PasswordEntrySerializer(data=request.data)
@@ -56,12 +54,12 @@ class PasswordEntryView(APIView):
     def put(self, request, id):
         password_instance = PasswordEntry.objects.get(id=id)
         if 'password' in request.data and request.data['password'] != password_instance.password:
-            password = encrypt(request.data['password'], "pass")
+            password = encrypt(request.data['password'], "pass") #encrypt the password with "pass"key
             request.data['password'] = password
 
         serializer = PasswordEntrySerializer(password_instance, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

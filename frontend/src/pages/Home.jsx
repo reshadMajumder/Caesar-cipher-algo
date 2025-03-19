@@ -3,6 +3,130 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { API_URL } from '../lib/api'
 
+// First, create a separate PasswordDetailsModal component outside the main Home component
+const PasswordDetailsModal = ({ 
+  showDetails, 
+  selectedPassword, 
+  onClose, 
+  onEdit, 
+  onCopy, 
+  copySuccess 
+}) => {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editForm, setEditForm] = useState({
+    website: '',
+    username: '',
+    password: ''
+  })
+
+  useEffect(() => {
+    if (selectedPassword) {
+      setEditForm({
+        website: selectedPassword.website,
+        username: selectedPassword.username,
+        password: selectedPassword.password
+      })
+    }
+  }, [selectedPassword])
+
+  if (!showDetails || !selectedPassword) return null;
+
+  const handleInputChange = (e, field) => {
+    setEditForm(prev => ({
+      ...prev,
+      [field]: e.target.value
+    }))
+  }
+
+  const handleSave = () => {
+    onEdit(editForm)
+    setIsEditing(false)
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+      <div className="relative top-20 mx-auto p-8 border w-[480px] shadow-2xl rounded-xl bg-white">
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={() => {
+              onClose()
+              setIsEditing(false)
+            }}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">Password Details</h3>
+        <div className="space-y-6">
+          {['website', 'username', 'password'].map((field) => (
+            <div key={field} className="bg-gray-50 p-4 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 capitalize mb-2">{field}</label>
+              <div className="flex items-center justify-between">
+                {isEditing ? (
+                  <input
+                    type={field === 'password' ? 'password' : 'text'}
+                    value={editForm[field]}
+                    onChange={(e) => handleInputChange(e, field)}
+                    className="flex-1 mr-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                ) : (
+                  <p className="text-lg text-gray-900">{selectedPassword[field]}</p>
+                )}
+                {!isEditing && (
+                  <button
+                    onClick={() => onCopy(selectedPassword[field])}
+                    className="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    <span>{copySuccess === field ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Created At</label>
+            <p className="text-lg text-gray-900">
+              {new Date(selectedPassword.created_at).toLocaleString()}
+            </p>
+          </div>
+          <div className="flex justify-end space-x-3 mt-6">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                >
+                  Save Changes
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   const navigate = useNavigate()
   const [passwords, setPasswords] = useState([])
@@ -13,6 +137,12 @@ export default function Home() {
   const [selectedPassword, setSelectedPassword] = useState(null)
   const [showDetails, setShowDetails] = useState(false)
   const [copySuccess, setCopySuccess] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+  const [editForm, setEditForm] = useState({
+    website: '',
+    username: '',
+    password: ''
+  })
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -129,56 +259,42 @@ export default function Home() {
     }
   }
 
-  const PasswordDetailsModal = () => {
-    if (!showDetails || !selectedPassword) return null;
+  const handleModalClose = () => {
+    setShowDetails(false)
+    setSelectedPassword(null)
+  }
 
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
-        <div className="relative top-20 mx-auto p-8 border w-[480px] shadow-2xl rounded-xl bg-white">
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={() => {
-                setShowDetails(false)
-                setSelectedPassword(null)
-              }}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Password Details</h3>
-          <div className="space-y-6">
-            {['website', 'username', 'password'].map((field) => (
-              <div key={field} className="bg-gray-50 p-4 rounded-lg">
-                <label className="block text-sm font-medium text-gray-700 capitalize mb-2">{field}</label>
-                <div className="flex items-center justify-between">
-                  <p className="text-lg text-gray-900">{selectedPassword[field]}</p>
-                  <button
-                    onClick={() => handleCopy(selectedPassword[field])}
-                    className="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                    </svg>
-                    <span>{copySuccess === field ? 'Copied!' : 'Copy'}</span>
-                  </button>
-                </div>
-              </div>
-            ))}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Created At</label>
-              <p className="text-lg text-gray-900">
-                {new Date(selectedPassword.created_at).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const handleModalEdit = async (formData) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/password-entries/${selectedPassword.id}/`,
+        {
+          ...formData,
+          user: user.id
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      setPasswords(passwords.map(p => 
+        p.id === selectedPassword.id ? response.data : p
+      ))
+      
+      setSelectedPassword(response.data)
+      setError(null)
+    } catch (error) {
+      console.error('Error updating password:', error)
+      if (error.response?.status === 401) {
+        navigate('/login')
+      } else {
+        setError('Failed to update password')
+      }
+    }
+  }
 
   if (loading) return (
     <div className="flex justify-center items-center h-screen">
@@ -201,7 +317,7 @@ export default function Home() {
                       {field}
                     </label>
                     <input
-                      type="text"
+                      type={field === 'password' ? 'password' : 'text'}
                       name={field}
                       id={field}
                       required
@@ -241,9 +357,9 @@ export default function Home() {
                   <div key={password.id} className="p-6 hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <h3 className="text-lg font-medium text-gray-900">{password.website}</h3>
-                        <p className="text-gray-500">{password.username}</p>
-                        <p className="font-mono text-sm text-gray-700">{password.password}</p>
+                        <h3 className="text-lg font-medium text-gray-900">Website: {password.website}</h3>
+                        <p className="text-gray-500"><b>Username:</b> {password.username}</p>
+                        <p className="font-mono text-sm text-gray-700"><b>Password:</b> {password.password}</p>
                         <p className="text-xs text-gray-400">
                           Created: {new Date(password.created_at).toLocaleString()}
                         </p>
@@ -272,7 +388,14 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <PasswordDetailsModal />
+      <PasswordDetailsModal 
+        showDetails={showDetails}
+        selectedPassword={selectedPassword}
+        onClose={handleModalClose}
+        onEdit={handleModalEdit}
+        onCopy={handleCopy}
+        copySuccess={copySuccess}
+      />
     </div>
   )
 }
